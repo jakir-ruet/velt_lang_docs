@@ -1,18 +1,26 @@
-use actix_web::{get, web, App, HttpServer, Responder};
 
-#[get("/hello/{name}")]
-async fn greet(name: web::Path<String>) -> impl Responder {
-    format!("Hello {name}!")
+use actix_web::{get, App, HttpServer, Responder, HttpResponse};
+use actix_files::Files;
+
+#[get("/")]
+async fn greet() -> impl Responder {
+    HttpResponse::Ok().body(include_str!("../views/index.html"))
+}
+
+#[get("/install")]
+async fn install() -> impl Responder {
+    HttpResponse::Ok().body(include_str!("../views/quick_start.html"))
 }
 
 #[actix_web::main] // or #[tokio::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .route("/hello", web::get().to(|| async { "Hello World!" }))
+            .service(Files::new("/static", "../../velt/target/debug"))
             .service(greet)
+            .service(install)
     })
-    .bind(("127.0.0.1", 6001))?
-    .run()
-    .await
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
 }
