@@ -25,6 +25,13 @@ async fn docs(n: web::Path<String>) -> impl Responder {
             include_str!("../views/getting_started.html"),
             include_str!("../views/docs.html")
         ));
+    }
+    if name == "formatter.html" {
+        return HttpResponse::Ok().body(format!(
+            "{}{}",
+            include_str!("../views/formatter.html"),
+            include_str!("../views/docs.html")
+        ));
     } else {
         HttpResponse::Ok().body(include_str!("../views/docs.html"))
     }
